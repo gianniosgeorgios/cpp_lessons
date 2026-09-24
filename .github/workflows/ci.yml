@@ -1,0 +1,16 @@
+name: Test submissions
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show changed files
+        run: git --no-pager diff --name-only "$GITHUB_BASE_REF"..."$GITHUB_SHA" || true
+      - name: Run submission tests
+        run: |
+          chmod +x scripts/test_submission.sh
+          ./scripts/test_submission.sh

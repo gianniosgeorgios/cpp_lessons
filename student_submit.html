@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Submit Solution — Array Exercises</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;max-width:900px;margin:2rem auto;padding:1rem}
+    label{display:block;margin-top:0.75rem;font-weight:600}
+    input,select,textarea{width:100%;padding:0.5rem;margin-top:0.25rem;border:1px solid #ccc;border-radius:6px}
+    textarea{height:320px;font-family:monospace}
+    .row{display:flex;gap:1rem}
+    .col{flex:1}
+    button{margin-top:1rem;padding:0.6rem 1rem;border-radius:8px;border:0;background:#0366d6;color:white}
+    pre{background:#f6f8fa;padding:0.8rem;border-radius:6px;overflow:auto}
+    .hint{color:#555;font-size:0.9rem}
+  </style>
+</head>
+<body>
+  <h1>Submit Solution (no git CLI)</h1>
+  <p class="hint">Paste code you tested in an online C editor and open a pre-filled GitHub new-file editor to submit.</p>
+
+  <label>Teacher repository (owner/repo)</label>
+  <input id="repo" placeholder="example: teachername/array-exercises" value="teacher/your-repo">
+
+  <div class="row">
+    <div class="col">
+      <label>Your GitHub username</label>
+      <input id="username" placeholder="your-github-username">
+    </div>
+    <div class="col">
+      <label>Exercise</label>
+      <select id="exercise"></select>
+    </div>
+  </div>
+
+  <label>Filename (will be created under submissions/USERNAME/)</label>
+  <input id="filename" placeholder="day1.c" value="day1.c">
+
+  <label>Source code</label>
+  <textarea id="code" placeholder="Paste your C code here"></textarea>
+
+  <div class="row">
+    <div class="col">
+      <button id="openGitHub">Open GitHub New-File Editor</button>
+    </div>
+    <div class="col">
+      <button id="loadSample">Load sample input & expected output</button>
+    </div>
+  </div>
+
+  <h3>Sample input</h3>
+  <pre id="sampleInput">—</pre>
+  <h3>Expected output</h3>
+  <pre id="sampleOutput">—</pre>
+
+  <script>
+    async function loadManifest(){
+      try{
+        const r = await fetch('exercises/manifest.json');
+        const m = await r.json();
+        const sel = document.getElementById('exercise');
+        m.forEach(e=>{
+          const opt = document.createElement('option');
+          opt.value = e.id; opt.textContent = e.title+' ('+e.id+')';
+          opt.dataset.path = e.path;
+          sel.appendChild(opt);
+        });
+      }catch(err){
+        console.error(err);
+        const sel = document.getElementById('exercise');
+        const opt = document.createElement('option'); opt.value='day1'; opt.textContent='day1'; sel.appendChild(opt);
+      }
+    }
+
+    function openGitHubNewFile(){
+      const repo = document.getElementById('repo').value.trim();
+      const username = document.getElementById('username').value.trim();
+      if(!repo || !username){ alert('Please enter teacher repo and your GitHub username'); return; }
+      const filename = document.getElementById('filename').value.trim() || 'day1.c';
+      const code = document.getElementById('code').value || '';
+      const branch = 'main';
+      const path = `submissions/${encodeURIComponent(username)}/${encodeURIComponent(filename)}`;
+      const base = `https://github.com/${repo}/new/${branch}`;
+      const params = new URLSearchParams();
+      params.set('filename', path);
+      params.set('value', code);
+      params.set('message', `Add submission ${filename} by ${username}`);
+      const url = base + '?' + params.toString();
+      window.open(url, '_blank');
+    }
+
+    async function loadSampleIO(){
+      const sel = document.getElementById('exercise');
+      const opt = sel.options[sel.selectedIndex];
+      const path = opt.dataset.path || `exercises/${sel.value}`;
+      // try common names input1.txt / output1.txt
+      try{
+        const inr = await fetch(path + '/tests/input1.txt');
+        const inTxt = inr.ok ? await inr.text() : 'No sample input found.';
+        document.getElementById('sampleInput').textContent = inTxt;
+      }catch(e){ document.getElementById('sampleInput').textContent = 'Error loading input.' }
+      try{
+        const outr = await fetch(path + '/tests/output1.txt');
+        const outTxt = outr.ok ? await outr.text() : 'No expected output found.';
+        document.getElementById('sampleOutput').textContent = outTxt;
+      }catch(e){ document.getElementById('sampleOutput').textContent = 'Error loading output.' }
+    }
+
+    document.getElementById('openGitHub').addEventListener('click', openGitHubNewFile);
+    document.getElementById('loadSample').addEventListener('click', loadSampleIO);
+    loadManifest();
+  </script>
+</body>
+</html>
