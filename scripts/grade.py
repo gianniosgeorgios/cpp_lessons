@@ -10,11 +10,37 @@ EXERCISES_DIR = ROOT / "exercises"
 DEFAULT_SOURCE = ROOT / "student" / "solution.cpp"
 
 
+def resolve_student_source(exercise_dir: Path, source_file: Path | None) -> Path:
+    if source_file is not None:
+        if not source_file.exists():
+            raise FileNotFoundError(f"Student source not found: {source_file}")
+        return source_file
+
+    day_solution = ROOT / "student" / exercise_dir.name / "solution.cpp"
+    if day_solution.exists():
+        return day_solution
+
+    if DEFAULT_SOURCE.exists():
+        return DEFAULT_SOURCE
+
+    raise FileNotFoundError(f"No student source found for {exercise_dir.name}")
+
+
 def normalize_text(value: str) -> str:
     return value.replace("\r\n", "\n").strip()
 
 
-def generate_runner_cpp(source_file: Path) -> str:
+def read_function_name(exercise_dir: Path) -> str:
+    function_file = exercise_dir / "function_name.txt"
+    if function_file.exists():
+        name = function_file.read_text(encoding="utf-8").strip()
+        if name:
+            return name
+
+    return "find_max"
+
+
+def generate_runner_cpp(source_file: Path, function_name: str) -> str:
     source_include = source_file.as_posix()
     return f'''#include <fstream>
 #include <iostream>
@@ -52,7 +78,7 @@ int main(int argc, char** argv) {{
         }}
 
         if (!arr.empty()) {{
-            cout << find_max(arr) << '\\n';
+            cout << {function_name}(arr) << '\\n';
         }}
     }}
 
@@ -87,8 +113,9 @@ def collect_cases(exercise_dir: Path):
 
 
 def compile_runner(source_file: Path, exercise_dir: Path, binary_dir: Path) -> Path:
+    function_name = read_function_name(exercise_dir)
     runner_cpp = binary_dir / f"{exercise_dir.name}_runner.cpp"
-    runner_cpp.write_text(generate_runner_cpp(source_file), encoding="utf-8")
+    runner_cpp.write_text(generate_runner_cpp(source_file, function_name), encoding="utf-8")
 
     binary_path = binary_dir / f"{exercise_dir.name}_runner.out"
     compile_result = subprocess.run(
@@ -119,8 +146,10 @@ def grade_exercise(exercise_dir: Path, source_file: Path) -> tuple[bool, list[st
     binary_dir = ROOT / ".grade"
     binary_dir.mkdir(exist_ok=True)
 
+    actual_source = resolve_student_source(exercise_dir, source_file)
+
     try:
-        binary_path = compile_runner(source_file, exercise_dir, binary_dir)
+        binary_path = compile_runner(actual_source, exercise_dir, binary_dir)
     except RuntimeError as exc:
         return False, [str(exc)]
 
@@ -171,11 +200,11 @@ def grade_exercise(exercise_dir: Path, source_file: Path) -> tuple[bool, list[st
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Grade C++ array exercises from .txt tests.")
-    parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE, help="Path to the student's C++ source file.")
+    parser.add_argument("--source", type=Path, help="Optional override path to the student's C++ source file.")
     parser.add_argument("--exercise", type=Path, help="Optional path to one exercise directory, e.g. exercises/day_01")
     args = parser.parse_args()
 
-    if not args.source.exists():
+    if args.source is not None and not args.source.exists():
         print(f"Student source not found: {args.source}")
         return 1
 
@@ -193,7 +222,8 @@ def main() -> int:
     for exercise_dir in exercise_dirs:
         print(f"\n[INFO] Grading {exercise_dir.name}")
         try:
-            ok, report = grade_exercise(exercise_dir, args.source)
+            source_to_use = resolve_student_source(exercise_dir, args.source)
+            ok, report = grade_exercise(exercise_dir, source_to_use)
         except Exception as exc:
             print(f"[ERROR] {exercise_dir.name}: {exc}")
             overall_ok = False
