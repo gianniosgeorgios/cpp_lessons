@@ -1,3 +1,15 @@
+C Arrays Exercises (GitHub Actions grading)
+
+This repository is a scaffold for hosting daily C array exercises, grading student C submissions automatically using GitHub Actions, and hosting a static instructions site via GitHub Pages.
+
+Key points:
+- Host on GitHub and enable Pages from the `docs/` folder.
+- Students submit solutions by adding a `.c` file under `submissions/<exercise-id>/<github-username>.c` and creating a Pull Request (or push to their fork and open a PR).
+- A GitHub Actions workflow compiles submissions and runs tests located under `exercises/<exercise-id>/tests/`.
+
+If you want me to push this skeleton to a new GitHub repo and help enable Pages, say so and provide the repo name or grant access.
+
+More details in `CONTRIBUTING.md`.
 # Array Exercises (C) — Student Submissions via GitHub
 
 This repository hosts daily array exercises in C (target complexity O(N)). It's designed to be hosted publicly on GitHub (Pages) and to accept student submissions via pull requests. CI (GitHub Actions) automatically compiles and tests submitted programs against provided testcases.
@@ -71,4 +83,28 @@ Student submission page (one-click)
   - The teacher repo's new-file editor opens pre-filled with filename and source so the student can commit via the GitHub web UI.
 
 This avoids any git commands while still letting the CI test submissions via PRs.
+
+Teacher: prepare placeholders so students only click & paste
+
+If you prefer students to do literally only one click + paste, run the placeholder generator:
+
+1. Create `students.txt` with one GitHub username per line.
+2. Run:
+
+```bash
+chmod +x scripts/create_placeholders.sh
+./scripts/create_placeholders.sh <owner> <repo> <day-id> students.txt
+```
+
+3. Commit and push:
+
+```bash
+git add submissions/
+git commit -m "Add student placeholders for <day-id>"
+git push origin main
+```
+
+4. Share the printed edit links with students. Each link opens the GitHub web editor for that student's file: they click, paste their code, commit — no CLI, no forks required.
+
+This shifts setup work to the teacher while minimizing student effort.
 
