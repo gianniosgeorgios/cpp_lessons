@@ -24,4 +24,4 @@ int main() {
     cout << "Minimum value = " << find_min(N, sample) << '\n';
 
     return 0;
-
+}
