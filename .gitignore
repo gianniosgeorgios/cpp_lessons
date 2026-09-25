@@ -1,0 +1,12 @@
+# Build artifacts
+*.o
+*.out
+*.exe
+.grade/
+/tmp/
+
+# Editor settings
+.vscode/
+
+# System files
+.DS_Store
