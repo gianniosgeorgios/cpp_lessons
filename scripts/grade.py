@@ -214,6 +214,19 @@ def grade_exercise(exercise_dir: Path, source_file: Path) -> tuple[bool, list[st
     return all_passed, report
 
 
+def read_days_config(days_file: Path) -> list[str]:
+    """Read which days should be graded from days.txt"""
+    if not days_file.exists():
+        return []
+    
+    days = []
+    for line in days_file.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line and not line.startswith("#"):
+            days.append(line)
+    return days
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Grade C++ array exercises from .txt tests.")
     parser.add_argument("--source", type=Path, help="Optional override path to the student's C++ source file.")
@@ -228,37 +241,44 @@ def main() -> int:
     if args.exercise:
         exercise_dirs = [args.exercise.resolve()]
     else:
-        exercise_dirs = sorted([path for path in EXERCISES_DIR.iterdir() if path.is_dir()])
+        # Read which days to grade from days.txt
+        days_config_file = ROOT / "days.txt"
+        specified_days = read_days_config(days_config_file)
+        
+        if specified_days:
+            # Only grade specified days
+            for day in specified_days:
+                day_path = EXERCISES_DIR / day
+                if day_path.exists() and day_path.is_dir():
+                    exercise_dirs.append(day_path)
+        else:
+            # If no days.txt or empty, grade all days
+            exercise_dirs = sorted([path for path in EXERCISES_DIR.iterdir() if path.is_dir()])
 
     if not exercise_dirs:
         print(f"No exercise directories found under {EXERCISES_DIR}")
         return 1
 
-    overall_ok = True
-    for exercise_dir in exercise_dirs:
-        print(f"\n[INFO] Grading {exercise_dir.name}")
-        try:
-            source_to_use = resolve_student_source(exercise_dir, args.source)
-            ok, report = grade_exercise(exercise_dir, source_to_use)
-        except Exception as exc:
-            print(f"[ERROR] {exercise_dir.name}: {exc}")
-            overall_ok = False
-            continue
+    # Process single day
+    exercise_dir = exercise_dirs[0]
+    print(f"\n[INFO] Grading {exercise_dir.name}")
+    try:
+        source_to_use = resolve_student_source(exercise_dir, args.source)
+        ok, report = grade_exercise(exercise_dir, source_to_use)
+    except Exception as exc:
+        print(f"[ERROR] {exercise_dir.name}: {exc}")
+        return 1
 
-        if ok:
-            for line in report:
-                print(f"[PASS] {line}")
-        else:
-            for line in report:
-                print(f"[FAIL] {line}")
-            overall_ok = False
-
-    if overall_ok:
-        print("\nAll exercises passed.")
+    if ok:
+        for line in report:
+            print(f"[PASS] {line}")
+        print(f"\n{exercise_dir.name} passed.")
         return 0
-
-    print("\nSome exercises failed.")
-    return 1
+    else:
+        for line in report:
+            print(f"[FAIL] {line}")
+        print(f"\n{exercise_dir.name} failed.")
+        return 1
 
 
 if __name__ == "__main__":
