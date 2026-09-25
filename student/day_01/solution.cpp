@@ -20,8 +20,7 @@ int main() {
     int sample[] = {3, 8, 1, 9, 4, 12, 5, 7};
     int N = 8;
 
-    cout << "Example array: 3 8 1 9 4 12 5 7\n";
-    cout << "Maximum value = " << find_max(N, sample) << '\n';
+    cout << find_max(N, sample) << '\n';
 
     return 0;
 }

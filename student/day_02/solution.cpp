@@ -20,8 +20,7 @@ int main() {
     int sample[] = {8, 3, 12, 9, 4, 7, 1, 5};
     int N = 8;
 
-    cout << "Example array: 8 3 12 9 4 7 1 5\n";
-    cout << "Minimum value = " << find_min(N, sample) << '\n';
+    cout << find_min(N, sample) << '\n';
 
     return 0;
 }

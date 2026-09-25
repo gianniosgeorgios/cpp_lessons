@@ -65,20 +65,36 @@ int main(int argc, char** argv) {{
     }}
 
     string line;
+    int N;
     while (getline(input_file, line)) {{
         if (line.empty()) {{
             continue;
         }}
-
-        istringstream iss(line);
-        vector<int> arr;
-        int value;
-        while (iss >> value) {{
-            arr.push_back(value);
+        
+        // Parse N from first line
+        istringstream iss_n(line);
+        if (!(iss_n >> N) || N <= 0) {{
+            continue;
         }}
-
-        if (!arr.empty()) {{
-            cout << {function_name}(arr.size(), arr.data()) << '\\n';
+        
+        // Parse array from second line (comma-separated)
+        if (!getline(input_file, line)) {{
+            break;
+        }}
+        
+        vector<int> arr;
+        istringstream iss(line);
+        string token;
+        while (getline(iss, token, ',')) {{
+            try {{
+                arr.push_back(stoi(token));
+            }} catch (...) {{
+                continue;
+            }}
+        }}
+        
+        if (static_cast<int>(arr.size()) == N) {{
+            cout << {function_name}(N, arr.data()) << '\\n';
         }}
     }}
 
