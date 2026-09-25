@@ -78,7 +78,7 @@ int main(int argc, char** argv) {{
         }}
 
         if (!arr.empty()) {{
-            cout << {function_name}(arr) << '\\n';
+            cout << {function_name}(arr.size(), arr.data()) << '\\n';
         }}
     }}
 
