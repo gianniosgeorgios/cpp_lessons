@@ -14,8 +14,7 @@ int main() {
     int sample[] = {1, 2, 3, 4, 5};
     int N = 5;
 
-    cout << sum_array(N, sample) << '
-';
+    cout << sum_array(N, sample) << '\n';
 
     return 0;
 }
