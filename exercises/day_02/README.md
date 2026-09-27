@@ -1,11 +1,11 @@
-# Day 02 - Minimum element in an array
+# Day 02 - Ελάχιστο στοιχείο σε έναν πίνακα
 
-Given an array of integers, find the minimum value.
+Δίνεται ένας πίνακας ακεραίων. Βρες την ελάχιστη τιμή.
 
-The input file contains one array per line.
-Each line is a separate test case.
+Το αρχείο εισόδου περιέχει έναν πίνακα ανά γραμμή.
+Κάθε γραμμή είναι ξεχωριστό test case.
 
-Example:
+Παράδειγμα:
 
 `input.txt`
 ```text
@@ -19,6 +19,6 @@ Example:
 -9
 ```
 
-Requirements:
-- time complexity: O(N)
-- space complexity: O(1) extra space (excluding input storage)
+Απαιτήσεις:
+- χρονική πολυπλοκότητα: O(N)
+- χωρική πολυπλοκότητα: O(1) επιπλέον χώρος (χωρίς να υπολογίζεται η αποθήκευση της εισόδου)
