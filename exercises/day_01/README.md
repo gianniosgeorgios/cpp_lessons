@@ -1,11 +1,11 @@
-# Day 01 - Maximum element in an array
+# Day 01 - Μέγιστο στοιχείο σε έναν πίνακα
 
-Given an array of integers, find the maximum value.
+Δίνεται ένας πίνακας ακεραίων. Βρες τη μέγιστη τιμή.
 
-The input file contains one array per line.
-Each line is a separate test case.
+Το αρχείο εισόδου περιέχει έναν πίνακα ανά γραμμή.
+Κάθε γραμμή είναι ξεχωριστό test case.
 
-Example:
+Παράδειγμα:
 
 `input.txt`
 ```text
@@ -19,6 +19,6 @@ Example:
 -1
 ```
 
-Requirements:
-- time complexity: O(N)
-- space complexity: O(1) extra space (excluding input storage)
+Απαιτήσεις:
+- χρονική πολυπλοκότητα: O(N)
+- χωρική πολυπλοκότητα: O(1) επιπλέον χώρος (χωρίς να υπολογίζεται η αποθήκευση της εισόδου)
