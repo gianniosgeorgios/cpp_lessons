@@ -95,16 +95,19 @@ int main(int argc, char** argv) {{
         }}
         
         if (static_cast<int>(arr.size()) == N) {{
-            if constexpr (std::is_void_v<decltype({function_name}(N, arr.data()))>) {{
-                {function_name}(N, arr.data());
-                for (int i = 0; i < N; ++i) {{
-                    if (i) cout << ',';
-                    cout << arr[i];
+            auto run_case = [&](auto* p) {{
+                if constexpr (std::is_void_v<decltype({function_name}(N, p))>) {{
+                    {function_name}(N, p);
+                    for (int i = 0; i < N; ++i) {{
+                        if (i) cout << ',';
+                        cout << p[i];
+                    }}
+                    cout << '\\n';
+                }} else {{
+                    cout << {function_name}(N, p) << '\\n';
                 }}
-                cout << '\\n';
-            }} else {{
-                cout << {function_name}(N, arr.data()) << '\\n';
-            }}
+            }};
+            run_case(arr.data());
         }}
     }}
 
