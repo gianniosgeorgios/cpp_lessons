@@ -47,6 +47,7 @@ def generate_runner_cpp(source_file: Path, function_name: str) -> str:
 #include <sstream>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 #define main student_main
 #include "{source_include}"
@@ -94,7 +95,16 @@ int main(int argc, char** argv) {{
         }}
         
         if (static_cast<int>(arr.size()) == N) {{
-            cout << {function_name}(N, arr.data()) << '\\n';
+            if constexpr (std::is_void_v<decltype({function_name}(N, arr.data()))>) {{
+                {function_name}(N, arr.data());
+                for (int i = 0; i < N; ++i) {{
+                    if (i) cout << ',';
+                    cout << arr[i];
+                }}
+                cout << '\\n';
+            }} else {{
+                cout << {function_name}(N, arr.data()) << '\\n';
+            }}
         }}
     }}
 
