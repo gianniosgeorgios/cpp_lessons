@@ -33,9 +33,9 @@ def normalize_text(value: str) -> str:
 def read_function_name(exercise_dir: Path) -> str:
     function_file = exercise_dir / "function_name.txt"
     if function_file.exists():
-        name = function_file.read_text(encoding="utf-8").strip()
-        if name:
-            return name
+        parts = function_file.read_text(encoding="utf-8").split()
+        if parts:
+            return parts[-1]
 
     return "find_max"
 
@@ -97,12 +97,21 @@ int main(int argc, char** argv) {{
         if (static_cast<int>(arr.size()) == N) {{
             auto run_case = [&](auto* p) {{
                 if constexpr (std::is_void_v<decltype({function_name}(N, p))>) {{
+                    ostringstream captured;
+                    streambuf* old_buf = cout.rdbuf(captured.rdbuf());
                     {function_name}(N, p);
-                    for (int i = 0; i < N; ++i) {{
-                        if (i) cout << ',';
-                        cout << p[i];
+                    cout.rdbuf(old_buf);
+                    string printed = captured.str();
+                    while (!printed.empty() && (printed.back() == '\\n' || printed.back() == ' ' || printed.back() == '\\r')) printed.pop_back();
+                    if (!printed.empty()) {{
+                        cout << printed << '\\n';
+                    }} else {{
+                        for (int i = 0; i < N; ++i) {{
+                            if (i) cout << ',';
+                            cout << p[i];
+                        }}
+                        cout << '\\n';
                     }}
-                    cout << '\\n';
                 }} else {{
                     cout << {function_name}(N, p) << '\\n';
                 }}

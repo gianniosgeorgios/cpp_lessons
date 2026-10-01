@@ -1,1 +1,1 @@
-majority_element
+void majority_element
