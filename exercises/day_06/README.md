@@ -1,10 +1,8 @@
-# Day 06 - Second largest element
+# Day 06 - Εύρεση δευτερου μεγαλύτερου στοιχείου
 
-Find the second largest element in the array.
+Να βρεθεί το δέυτερο μεγαλύτερο στοιχείο σε ενα πίνακα
 
-The array contains distinct integers and the second largest value always exists.
-
-Example:
+Παράδειγμα:
 
 `input.txt`
 ```text
@@ -23,6 +21,5 @@ Example:
 -5
 ```
 
-Requirements:
-- time complexity: O(N)
-- extra space complexity: O(1)
+Απαιτήσεις:
+- χρονική πολυπλοκότητα: O(N)

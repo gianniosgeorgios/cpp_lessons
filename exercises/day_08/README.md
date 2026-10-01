@@ -1,9 +1,10 @@
-# Day 08 - Remove duplicates from a sorted array
+# Day 08 - Αφαίρεση διπλότυπων απο ταξινομημένο πίνακα
 
-Given a sorted array, remove duplicate values and keep only one occurrence of each element.
-Return the new length of the array after removing duplicates.
+Δίνεται ένας ταξινομημένος πίνακας. Να αφαιρέσετε τις διπλότυπες τιμές και να κρατήσετε μόνο μία εμφάνιση από κάθε στοιχείο.
 
-Example:
+Να επιστρέψετε το νέο μήκος του πίνακα μετά την αφαίρεση των διπλότυπων.
+
+Παράδειγμα:
 
 `input.txt`
 ```text
@@ -21,7 +22,7 @@ Example:
 4
 1
 ```
+Απαιτήσεις:
 
-Requirements:
-- time complexity: O(N)
-- extra space complexity: O(1)
+Χρονική πολυπλοκότητα: O(N)
+

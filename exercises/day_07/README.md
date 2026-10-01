@@ -1,10 +1,8 @@
-# Day 07 - Check if the array is sorted
+# Day 07 - Έλεγχος ταξινομημένου πίνακα
 
-Given an array, determine whether it is sorted in non-decreasing order.
+Δίνεται ένας πινακας ακεραίων. Να διαπιστωθεί αν ο πινακας ειναι ταξινομημένος σε αυξουσα σειρά. Σε περίπτωση που ειναι να επιστρέφει 1, αλλιώς 0.
 
-A valid sorted array means every element is greater than or equal to the previous one.
-
-Example:
+Παράδειγμα:
 
 `input.txt`
 ```text
@@ -23,6 +21,5 @@ Example:
 1
 ```
 
-Requirements:
+Απαιτήσεις:
 - time complexity: O(N)
-- extra space complexity: O(1)
