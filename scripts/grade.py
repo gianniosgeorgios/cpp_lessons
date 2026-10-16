@@ -125,6 +125,71 @@ int main(int argc, char** argv) {{
 '''
 
 
+def is_tree_exercise(exercise_dir: Path) -> bool:
+    f = exercise_dir / "category.txt"
+    return f.exists() and f.read_text(encoding="utf-8").strip().lower() == "tree"
+
+
+def generate_tree_runner_cpp(source_file: Path, function_name: str, with_k: bool) -> str:
+    source_include = source_file.as_posix()
+    call = f"{function_name}(root, k)" if with_k else f"{function_name}(root)"
+    return f'''#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
+
+#define main student_main
+#include "{source_include}"
+#undef main
+
+using namespace std;
+
+static node* build_tree(const vector<string>& toks, size_t& i) {{
+    if (i >= toks.size()) return nullptr;
+    string t = toks[i++];
+    if (t == "#" || t.empty()) return nullptr;
+    node* n = new node(stoi(t));
+    n->left = build_tree(toks, i);
+    n->right = build_tree(toks, i);
+    return n;
+}}
+
+int main(int argc, char** argv) {{
+    if (argc < 2) return 1;
+    ifstream input_file(argv[1]);
+    if (!input_file) return 2;
+    string line;
+    while (getline(input_file, line)) {{
+        while (!line.empty() && (line.back() == '\\r' || line.back() == ' ')) line.pop_back();
+        if (line.empty()) continue;
+        string tree_part = line;
+        int k = 0;
+        bool has_k = false;
+        size_t bar = line.find('|');
+        if (bar != string::npos) {{
+            tree_part = line.substr(0, bar);
+            k = stoi(line.substr(bar + 1));
+            has_k = true;
+        }}
+        vector<string> toks;
+        istringstream iss(tree_part);
+        string tok;
+        while (getline(iss, tok, ',')) {{
+            size_t a = tok.find_first_not_of(" \\t");
+            size_t b = tok.find_last_not_of(" \\t");
+            toks.push_back(a == string::npos ? "" : tok.substr(a, b - a + 1));
+        }}
+        size_t i = 0;
+        node* root = build_tree(toks, i);
+        (void)has_k;
+        cout << {call} << '\\n';
+    }}
+    return 0;
+}}
+'''
+
+
 def collect_cases(exercise_dir: Path):
     tests_dir = exercise_dir / "tests"
     if not tests_dir.exists():
@@ -153,7 +218,8 @@ def collect_cases(exercise_dir: Path):
 def compile_runner(source_file: Path, exercise_dir: Path, binary_dir: Path) -> Path:
     function_name = read_function_name(exercise_dir)
     runner_cpp = binary_dir / f"{exercise_dir.name}_runner.cpp"
-    runner_cpp.write_text(generate_runner_cpp(source_file, function_name), encoding="utf-8")
+    runner_src = generate_tree_runner_cpp(source_file, function_name, "|" in (exercise_dir / "tests" / "input.txt").read_text(encoding="utf-8")) if is_tree_exercise(exercise_dir) else generate_runner_cpp(source_file, function_name)
+    runner_cpp.write_text(runner_src, encoding="utf-8")
 
     binary_path = binary_dir / f"{exercise_dir.name}_runner.out"
     compile_result = subprocess.run(
